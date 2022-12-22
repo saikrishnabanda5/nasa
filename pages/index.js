@@ -28,15 +28,11 @@ export default function Home(props) {
 export const getStaticProps = async () => {
 	try {
 		const response = await getNasaLatestData();
-		const getLatestResponse = await getNasaWeeklyData(
-			
-		);
 		// const response = await getNasaLatestData();
 
 		return {
 			props: {
 				data: response.data,
-				weekData: getLatestResponse.data,
 			},
 			// revalidate: 86400,
 		};
