@@ -48,26 +48,33 @@ function NasaDetails({ data }) {
 		fetchNasaData();
 	}, []);
 
-	const fetchNasaData = async (a) => {
+	const fetchNasaData = async () => {
 		// setEndDate(startDate);
 		// setStartDate(startDate + 7);
-		console.log(a, "startDate", startDate, "endDate", endDate);
+		console.log(
+			"startDate",
+			lastWeekResponse.length + startDate,
+			"endDate",
+			lastWeekResponse.length + endDate
+		);
+
 		await axios
 			.get(
 				`${
 					process.env.NEXT_PUBLIC_SERVER_URL
 				}/nasa?api=weekData&start_date=${format(
-					subDays(new Date(), startDate),
+					subDays(new Date(), lastWeekResponse.length + startDate),
 					"yyyy-MM-dd"
 				)}&end_date=${format(
-					subDays(new Date(), endDate),
+					subDays(new Date(), lastWeekResponse.length + endDate),
 					"yyyy-MM-dd"
 				)}&thumbs=true`
 			)
 			.then(function (response) {
 				if (response.status === 200) {
-					console.log("REPSO", response.data);
-					setLastWeekResponse(lastWeekResponse.concat(response.data));
+					console.log("REPSO", response.data, lastWeekResponse.length);
+					// setLastWeekResponse(lastWeekResponse.concat(response.data));
+					setLastWeekResponse([...lastWeekResponse, ...response.data]);
 				}
 			})
 			.catch(function (error) {
@@ -167,12 +174,15 @@ function NasaDetails({ data }) {
 			</SpotLight>
 			<InfiniteScroll
 				dataLength={lastWeekResponse.length}
-				next={fetchNasaData(startDate + 7)}
-				style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
-				inverse={true} //
+				next={() => {
+					fetchNasaData();
+				}}
+				// style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
+				// inverse={true} //
 				hasMore={true}
 				loader={<h4>Loading...</h4>}
-				scrollableTarget='scrollableDiv'>
+				// scrollableTarget='scrollableDiv'
+			>
 				{lastWeekResponse.map((item, index) => (
 					<>
 						<Image src={item.url} width={300} height={300} alt='nasa_image' />
