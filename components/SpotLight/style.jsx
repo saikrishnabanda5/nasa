@@ -1,3 +1,4 @@
+import { Modal } from "antd";
 import ReactPlayer from "react-player";
 import styled from "styled-components";
 
@@ -29,6 +30,23 @@ export const Description = styled.p`
 	padding-top: 16px;
 `;
 
-export const Title = styled.h1`
-	// background: #ffffff;
+export const Title = styled.h1``;
+
+export const AntModal = styled(Modal)`
+	.ant-modal-content {
+		height: 100vh;
+		width: 98vw;
+		padding: 0;
+	}
+	.ant-modal-footer {
+		display: none;
+	}
+	svg {
+		background: white;
+		width: 25px;
+		height: 25px;
+	}
+	img {
+		position: fixed !important;
+	}
 `;
