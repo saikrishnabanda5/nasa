@@ -33,13 +33,10 @@ export const NasaImageDate = styled.p`
 	padding-top: 10px;
 `;
 
-export const InfiniteScrollData = styled(InfiniteScroll)`
-	// display: flex;
-`;
 
 export const NasaCards = styled.div`
 	display: flex;
-	overflow: ${(props) => (props.length ? "scroll" : "hidden")};
+	overflow: ${(props) => (props.length ? "auto" : "hidden")};
 `;
 
 export const Player = styled(ReactPlayer)``;
@@ -63,6 +60,4 @@ export const AntModal = styled(Modal)`
 	}
 `;
 
-export const DisplayModal = styled.div`
-	// padding-top: 16px;
-`;
+

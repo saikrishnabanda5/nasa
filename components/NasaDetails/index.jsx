@@ -22,6 +22,7 @@ function NasaDetails({ data }) {
 	const [lastWeekResponse, setLastWeekResponse] = useState([]);
 	const [startDate, setStartDate] = useState(true);
 	const [open, setOpen] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [modalData, setModalData] = useState();
 	const [weekCount, setWeekCount] = useState([]);
 
@@ -58,8 +59,8 @@ function NasaDetails({ data }) {
 				)}&thumbs=true`
 			)
 			.then(function (response) {
+				setLoading(false);
 				if (Math.floor(dataLength / 7) > 0) {
-					console.log("oo", dataLength);
 					setWeekCount([
 						...weekCount,
 						{
@@ -137,21 +138,26 @@ function NasaDetails({ data }) {
 		);
 	};
 
+	const getSpinner = () => {
+		return (
+			<Spin
+				tip='Loading'
+				size='large'
+				style={{ width: "100%", fontSize: "20px", height: "100px" }}
+			/>
+		);
+	};
+
 	return (
 		<Container>
 			<Header />
 			<SpotLight data={data} />
+			{loading ? getSpinner() : ""}
 			<InfiniteScroll
 				dataLength={lastWeekResponse.length}
 				next={fetchNasaData}
 				hasMore={true}
-				loader={
-					<Spin
-						tip='Loading'
-						size='large'
-						style={{ width: "100%", height: "100px" }}
-					/>
-				}
+				loader={getSpinner()}
 				scrollableTarget='scrollableDiv'>
 				{getResponse(0, 7)}
 				{getResponse(7, 14)}
@@ -160,7 +166,7 @@ function NasaDetails({ data }) {
 				})}
 			</InfiniteScroll>
 
-			<DisplayModal>
+			<div>
 				<AntModal
 					centered
 					open={open}
@@ -170,7 +176,7 @@ function NasaDetails({ data }) {
 					height={"100%"}>
 					{getModalData()}
 				</AntModal>
-			</DisplayModal>
+			</div>
 		</Container>
 	);
 }
