@@ -10,7 +10,6 @@ async function handler(req, res) {
 }
 
 async function getLastWeekData(req, res) {
-	// console.log("REW", req.query);
 	try {
 		const resp = await axios.get(
 			`${process.env.SERVER_URL}
@@ -18,7 +17,7 @@ async function getLastWeekData(req, res) {
 		);
 		res.status(200).json(resp.data);
 	} catch (error) {
-		res.status(500).json("ERRT", error);
+		res.status(500).json("Error", error);
 	}
 	res.end();
 }

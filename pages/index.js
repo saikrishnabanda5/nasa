@@ -1,14 +1,8 @@
 import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "../styles/Home.module.css";
-import { getNasaLatestData, getNasaWeeklyData } from "../apiService/apiCall";
+import { getNasaLatestData } from "../apiService/apiCall";
 import NasaDetails from "../components/NasaDetails";
 
-const inter = Inter({ subsets: ["latin"] });
-
 export default function Home(props) {
-	console.log("props", props);
 	return (
 		<>
 			<Head>
@@ -28,13 +22,12 @@ export default function Home(props) {
 export const getStaticProps = async () => {
 	try {
 		const response = await getNasaLatestData();
-		// const response = await getNasaLatestData();
 
 		return {
 			props: {
 				data: response.data,
 			},
-			// revalidate: 86400,
+			revalidate: 86400,
 		};
 	} catch (error) {
 		return { notFound: true };
