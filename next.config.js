@@ -2,7 +2,14 @@
 const nextConfig = {
 	reactStrictMode: true,
 	images: {
-		domains: ["apod.nasa.gov", "www.youtube.com", "player.vimeo.com"],
+		domains: [
+			"apod.nasa.gov",
+			"www.youtube.com",
+			"player.vimeo.com",
+			"img.youtube.com",
+			"stefanom.org",
+			"i.vimeocdn.com",
+		],
 	},
 	compiler: {
 		styledComponents: true,
