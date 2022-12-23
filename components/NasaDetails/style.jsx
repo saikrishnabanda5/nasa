@@ -1,67 +1,68 @@
+import { Modal } from "antd";
+import InfiniteScroll from "react-infinite-scroll-component";
+import ReactPlayer from "react-player";
 import styled from "styled-components";
 
 export const Container = styled.div`
 	background: #ffffff;
-	height: 100vh;
 `;
 
-export const Title = styled.h1`
-	background: #ffffff;
-`;
-
-export const Header = styled.div`
+export const CardContainer = styled.div`
 	display: flex;
-	justify-content: space-between;
-	background-color: transparent;
+	flex-direction: column;
+	background: black;
+	color: #fff;
+	margin: 24px;
+	cursor: pointer;
+`;
+
+export const NasaDescription = styled.div`
+	display: flex;
+	flex-direction: column;
+	padding-top: 12px;
 	align-items: center;
-	background: url("https://www.nasa.gov/sites/all/themes/custom/nasatwo/images/starfield-banner.jpg");
 `;
 
-export const Left = styled.div``;
+export const NasaImageTitle = styled.p`
+	font-size: 20px;
+	text-align: center;
+`;
 
-export const ImageContainer = styled.div`
+export const NasaImageDate = styled.p`
+	font-size: 20px;
+	padding-top: 10px;
+`;
+
+export const InfiniteScrollData = styled(InfiniteScroll)`
+	// display: flex;
+`;
+
+export const NasaCards = styled.div`
 	display: flex;
-	@media screen and (max-width: 767px) {
+	overflow: ${(props) => (props.length ? "scroll" : "hidden")};
+`;
+
+export const Player = styled(ReactPlayer)``;
+
+export const AntModal = styled(Modal)`
+	.ant-modal-content {
+		height: 100vh;
+		width: 98vw;
+		padding: 0;
+	}
+	.ant-modal-footer {
 		display: none;
 	}
-`;
-
-export const MobileImageContainer = styled.div`
-	display: none;
-	@media screen and (max-width: 767px) {
-		display: flex;
+	svg {
+		background: white;
+		width: 25px;
+		height: 25px;
+	}
+	img {
+		position: fixed !important;
 	}
 `;
 
-export const Right = styled.div`
-	font-size: 36px;
-	color: #ffffff;
-	@media screen and (max-width: 767px) {
-		font-size: 20px;
-	}
-`;
-export const Name = styled.h1`
-	font-size: 32px;
-	color: #ffffff;
-	@media screen and (max-width: 767px) {
-		font-size: 20px;
-	}
-`;
-
-export const SpotLight = styled.div`
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-`;
-
-export const Details = styled.div`
-	width: 40%;
-`;
-
-export const Description = styled.p`
-	padding-top: 16px;
-`;
-
-export const Author = styled.h3`
-	padding-top: 16px;
+export const DisplayModal = styled.div`
+	// padding-top: 16px;
 `;

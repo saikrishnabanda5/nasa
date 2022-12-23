@@ -1,195 +1,176 @@
+import { Spin } from "antd";
 import axios from "axios";
-import { format, startOfDay, subDays } from "date-fns";
+import { format, subDays } from "date-fns";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import ReactPlayer from "react-player";
-import TruncateMarkup from "react-truncate-markup";
 import {
-	Author,
+	AntModal,
+	CardContainer,
 	Container,
-	Description,
-	Details,
-	Header,
-	ImageContainer,
-	Left,
-	MobileImageContainer,
-	Name,
-	Right,
-	SpotLight,
-	Title,
+	DisplayModal,
+	NasaCards,
+	NasaDescription,
+	NasaImageDate,
+	NasaImageTitle,
+	Player,
 } from "./style";
-function NasaDetails({ data }) {
-	const [truncate, setTruncate] = useState(true);
-	const [lastWeekResponse, setLastWeekResponse] = useState([]);
-	const [startDate, setStartDate] = useState(7);
-	const [endDate, setEndDate] = useState(1);
+import SpotLight from "../SpotLight";
+import Header from "../Header";
 
-	const link = {
-		color: "blue",
-		textDecoration: "underline",
-		cursor: "pointer",
+function NasaDetails({ data }) {
+	const [lastWeekResponse, setLastWeekResponse] = useState([]);
+	const [startDate, setStartDate] = useState(true);
+	const [open, setOpen] = useState(false);
+	const [modalData, setModalData] = useState();
+	const [weekCount, setWeekCount] = useState([]);
+
+	const getLength = (length) => {
+		if (length === 0) {
+			return 1;
+		} else {
+			return length;
+		}
 	};
 
-	const readMoreEllipsis = (
-		<span>
-			...
-			<span onClick={() => setTruncate(!truncate)} style={link}>
-				read more
-			</span>
-		</span>
-	);
-
-	useEffect(() => {
-		console.log(
-			format(subDays(new Date(), 1), "yyyy-MM-dd"),
-			format(subDays(new Date(), 7), "yyyy-MM-dd")
-		);
-		fetchNasaData();
-	}, []);
+	const getStartDate = () => {
+		if (startDate) {
+			setStartDate(false);
+			return 14;
+		} else {
+			return 7;
+		}
+	};
 
 	const fetchNasaData = async () => {
-		// setEndDate(startDate);
-		// setStartDate(startDate + 7);
-		console.log(
-			"startDate",
-			lastWeekResponse.length + startDate,
-			"endDate",
-			lastWeekResponse.length + endDate
-		);
-
+		const dataLength = lastWeekResponse.length;
+		const dataId = Math.floor(dataLength / 7 - 2);
 		await axios
 			.get(
 				`${
 					process.env.NEXT_PUBLIC_SERVER_URL
 				}/nasa?api=weekData&start_date=${format(
-					subDays(new Date(), lastWeekResponse.length + startDate),
+					subDays(new Date(), dataLength + getStartDate()),
 					"yyyy-MM-dd"
 				)}&end_date=${format(
-					subDays(new Date(), lastWeekResponse.length + endDate),
+					subDays(new Date(), getLength(dataLength)),
 					"yyyy-MM-dd"
 				)}&thumbs=true`
 			)
 			.then(function (response) {
-				if (response.status === 200) {
-					console.log("REPSO", response.data, lastWeekResponse.length);
-					// setLastWeekResponse(lastWeekResponse.concat(response.data));
-					setLastWeekResponse([...lastWeekResponse, ...response.data]);
+				if (Math.floor(dataLength / 7) > 0) {
+					console.log("oo", dataLength);
+					setWeekCount([
+						...weekCount,
+						{
+							id: dataId,
+							start: dataLength - dataId,
+							end: dataLength - dataId + 7,
+						},
+					]);
 				}
+
+				response.data.sort(function (start, end) {
+					var start_date = new Date(start.date);
+					var end_date = new Date(end.date);
+					return end_date - start_date;
+				});
+				setLastWeekResponse([...lastWeekResponse, ...response.data]);
 			})
 			.catch(function (error) {
 				console.log(error);
 			});
 	};
 
-	const getMediaType = () => {
-		if (data?.media_type === "image") {
-			return <Image src={data.url} width={300} height={300} />;
+	useEffect(() => {
+		fetchNasaData();
+	}, []);
+
+	const getModalData = () => {
+		if (modalData?.media_type === "image") {
+			return <Image fill src={modalData.url} alt='modal image' />;
 		} else {
 			return (
-				<video
-					width='400'
-					height='350'
-					// controls
-					poster='https://img.youtube.com/vi/0fKBhvDjuy0/0.jpg'>
-					<source src={data.url} type='video/mp4' />
-				</video>
+				<Player
+					width='98vw'
+					height='100vh'
+					muted={true}
+					loop={true}
+					url={modalData?.url}
+					light={modalData?.thumbnail_url}
+					playing
+					controls
+				/>
 			);
 		}
 	};
 
+	const getCardModal = (data) => {
+		setOpen(true);
+		setModalData(data);
+	};
+
+	const getResponse = (startDate, endDate) => {
+		return (
+			<NasaCards length={lastWeekResponse.length}>
+				{lastWeekResponse?.slice(startDate, endDate).map((item, index) => {
+					return (
+						<CardContainer onClick={() => getCardModal(item)} key={index}>
+							<Image
+								src={
+									item.media_type === "image" ? item.url : item.thumbnail_url
+								}
+								width={300}
+								height={250}
+								alt='nasa_image'
+							/>
+							<NasaDescription>
+								<NasaImageTitle>{item.title}</NasaImageTitle>
+								<NasaImageTitle>{item.copyright}</NasaImageTitle>
+								<NasaImageDate>{item.date}</NasaImageDate>
+							</NasaDescription>
+						</CardContainer>
+					);
+				})}
+				;
+			</NasaCards>
+		);
+	};
+
 	return (
 		<Container>
-			{/* <div>
-				<ReactPlayer
-					//   playsinline={true}
-					// width='100%'
-					// height='100%'
-					muted={true}
-					loop={true}
-					//   url={jumpstartClip}
-					//   playing={jumpStartPlay}
-
-					url='https://www.youtube.com/embed/0fKBhvDjuy0?rel=0'
-					light='https://img.youtube.com/vi/0fKBhvDjuy0/0.jpg'
-					playing
-					controls
-				/>
-			</div> */}
-			{/* <div className='player-wrapper'>
-				<ReactPlayer
-					className='react-player'
-					url='https://www.youtube.com/watch?v=ysz5S6PUM-U'
-					width='100%'
-					height='100%'
-				/>
-			</div> */}
-			<Header>
-				<Left>
-					<ImageContainer>
-						<Image
-							src='/images/nasa-logo.webp'
-							alt='nasa logo'
-							width={200}
-							height={100}
-							priority
-						/>
-					</ImageContainer>
-					<MobileImageContainer>
-						<Image
-							src='/images/nasa-logo.webp'
-							alt='nasa logo'
-							width={120}
-							height={66}
-							priority
-						/>
-					</MobileImageContainer>
-					<Name>SAI KRISHNA</Name>
-				</Left>
-				<Right>
-					Astronomy Picture <br />
-					of the Day
-				</Right>
-			</Header>
-			<SpotLight>
-				<Details>
-					<Title>{data.title}</Title>
-					{truncate ? (
-						<TruncateMarkup lines={5} ellipsis={readMoreEllipsis}>
-							<div style={{ width: "auto" }}>
-								<Description>{data.explanation}</Description>
-							</div>
-						</TruncateMarkup>
-					) : (
-						<div style={{ width: "auto" }}>
-							<Description>{data.explanation}</Description>
-							<span onClick={() => setTruncate(!truncate)} style={link}>
-								{" show less"}
-							</span>
-						</div>
-					)}
-					<Author>Author : {data.copyright}</Author>
-				</Details>
-				{getMediaType()}
-			</SpotLight>
+			<Header />
+			<SpotLight data={data} />
 			<InfiniteScroll
 				dataLength={lastWeekResponse.length}
-				next={() => {
-					fetchNasaData();
-				}}
-				// style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
-				// inverse={true} //
+				next={fetchNasaData}
 				hasMore={true}
-				loader={<h4>Loading...</h4>}
-				// scrollableTarget='scrollableDiv'
-			>
-				{lastWeekResponse.map((item, index) => (
-					<>
-						<Image src={item.url} width={300} height={300} alt='nasa_image' />
-						{item.date}
-					</>
-				))}
+				loader={
+					<Spin
+						tip='Loading'
+						size='large'
+						style={{ width: "100%", height: "100px" }}
+					/>
+				}
+				scrollableTarget='scrollableDiv'>
+				{getResponse(0, 7)}
+				{getResponse(7, 14)}
+				{weekCount.map((item) => {
+					return getResponse(item.start, item.end);
+				})}
 			</InfiniteScroll>
+
+			<DisplayModal>
+				<AntModal
+					centered
+					open={open}
+					onOk={() => setOpen(false)}
+					onCancel={() => setOpen(false)}
+					width={"100%"}
+					height={"100%"}>
+					{getModalData()}
+				</AntModal>
+			</DisplayModal>
 		</Container>
 	);
 }
