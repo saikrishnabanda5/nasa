@@ -1,14 +1,5 @@
 import axios from "axios";
 
-async function handler(req, res) {
-	switch (req.query.api) {
-		case "weekData":
-			return getLastWeekData(req, res);
-		default:
-			return res.status(405).end(`Method ${req.method} Not Allowed`);
-	}
-}
-
 async function getLastWeekData(req, res) {
 	try {
 		const resp = await axios.get(
@@ -22,4 +13,4 @@ async function getLastWeekData(req, res) {
 	res.end();
 }
 
-export default handler;
+export default getLastWeekData;
