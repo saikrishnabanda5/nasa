@@ -20,6 +20,7 @@
 		"react-dom": "18.2.0",
 		"react-infinite-scroll-component": "^6.1.0",
 		"react-player": "^2.11.0",
+		"react-shimmer-effects": "^1.0.2",
 		"react-truncate-markup": "^5.1.2",
 		"styled-components": "^5.3.6"
 	}
