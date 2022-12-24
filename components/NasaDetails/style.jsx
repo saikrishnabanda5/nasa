@@ -16,7 +16,6 @@ export const CardContainer = styled.div`
 	transition: 1s;
 	:hover {
 		transform: scale(1.3);
-		height: fit-content;
 		z-index: 1;
 	}
 
