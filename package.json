@@ -23,8 +23,5 @@
 		"react-shimmer-effects": "^1.0.2",
 		"react-truncate-markup": "^5.1.2",
 		"styled-components": "^5.3.6"
-	},
-	"peerDependencies": {
-		"react": "18.2.0"
 	}
 }
