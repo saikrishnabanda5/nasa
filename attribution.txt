@@ -4,3 +4,4 @@ react-infinite-scroll-component - for infinite scrolling on apge
 react-truncate-markup - used for latest description in spotlight
 styled-components - for styling the page
 react-player - for video
+react-shimmer - for loading placeholder images before api call
