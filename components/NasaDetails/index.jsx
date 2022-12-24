@@ -6,23 +6,28 @@ import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
 	AntModal,
+	AntModalMobile,
 	CardContainer,
 	Container,
-	DisplayModal,
+	CopyrightOwner,
 	NasaCards,
 	NasaDescription,
 	NasaImageDate,
 	NasaImageTitle,
 	Player,
+	PlayerDesktop,
+	PlayerMobile,
 } from "./style";
 import SpotLight from "../SpotLight";
 import Header from "../Header";
+import { ShimmerSimpleGallery } from "react-shimmer-effects";
 
 function NasaDetails({ data }) {
 	const [lastWeekResponse, setLastWeekResponse] = useState([]);
 	const [startDate, setStartDate] = useState(true);
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(true);
+	const [shimmer, setShimmer] = useState(true);
 	const [modalData, setModalData] = useState();
 	const [weekCount, setWeekCount] = useState([]);
 
@@ -61,6 +66,7 @@ function NasaDetails({ data }) {
 			.then(function (response) {
 				setLoading(false);
 				if (Math.floor(dataLength / 7) > 0) {
+					setShimmer(false);
 					setWeekCount([
 						...weekCount,
 						{
@@ -89,19 +95,35 @@ function NasaDetails({ data }) {
 
 	const getModalData = () => {
 		if (modalData?.media_type === "image") {
-			return <Image fill src={modalData.url} alt='modal image' />;
+			return <Image fill src={modalData?.url} alt='modal image' />;
 		} else {
 			return (
-				<Player
-					width='98vw'
-					height='100vh'
-					muted={true}
-					loop={true}
-					url={modalData?.url}
-					light={modalData?.thumbnail_url}
-					playing
-					controls
-				/>
+				<>
+					<PlayerMobile>
+						<Player
+							width='100%'
+							height='400px'
+							muted={true}
+							loop={true}
+							url={modalData?.url}
+							light={modalData?.thumbnail_url}
+							playing
+							controls
+						/>
+					</PlayerMobile>
+					<PlayerDesktop>
+						<Player
+							width='98vw'
+							height='100vh'
+							muted={true}
+							loop={true}
+							url={modalData?.url}
+							light={modalData?.thumbnail_url}
+							playing
+							controls
+						/>
+					</PlayerDesktop>
+				</>
 			);
 		}
 	};
@@ -113,28 +135,31 @@ function NasaDetails({ data }) {
 
 	const getResponse = (startDate, endDate) => {
 		return (
-			<NasaCards length={lastWeekResponse.length}>
-				{lastWeekResponse?.slice(startDate, endDate).map((item, index) => {
-					return (
-						<CardContainer onClick={() => getCardModal(item)} key={index}>
-							<Image
-								src={
-									item.media_type === "image" ? item.url : item.thumbnail_url
-								}
-								width={300}
-								height={250}
-								alt='nasa_image'
-							/>
-							<NasaDescription>
-								<NasaImageTitle>{item.title}</NasaImageTitle>
-								<NasaImageTitle>{item.copyright}</NasaImageTitle>
-								<NasaImageDate>{item.date}</NasaImageDate>
-							</NasaDescription>
-						</CardContainer>
-					);
-				})}
-				;
-			</NasaCards>
+			<>
+				{loading ? getSpinner() : ""}
+				<NasaCards length={lastWeekResponse.length}>
+					{lastWeekResponse?.slice(startDate, endDate).map((item, index) => {
+						return (
+							<CardContainer onClick={() => getCardModal(item)} key={index}>
+								<Image
+									src={
+										item.media_type === "image" ? item.url : item.thumbnail_url
+									}
+									width={300}
+									height={250}
+									alt='nasa_image'
+								/>
+								<NasaDescription>
+									<NasaImageTitle>{item.title}</NasaImageTitle>
+									<CopyrightOwner>{item.copyright}</CopyrightOwner>
+									<NasaImageDate>{item.date}</NasaImageDate>
+								</NasaDescription>
+							</CardContainer>
+						);
+					})}
+					;
+				</NasaCards>
+			</>
 		);
 	};
 
@@ -152,7 +177,11 @@ function NasaDetails({ data }) {
 		<Container>
 			<Header />
 			<SpotLight data={data} />
-			{loading ? getSpinner() : ""}
+			{shimmer && loading ? (
+				<ShimmerSimpleGallery card imageHeight={300} />
+			) : (
+				""
+			)}
 			<InfiniteScroll
 				dataLength={lastWeekResponse.length}
 				next={fetchNasaData}
@@ -166,17 +195,22 @@ function NasaDetails({ data }) {
 				})}
 			</InfiniteScroll>
 
-			<div>
-				<AntModal
-					centered
-					open={open}
-					onOk={() => setOpen(false)}
-					onCancel={() => setOpen(false)}
-					width={"100%"}
-					height={"100%"}>
-					{getModalData()}
-				</AntModal>
-			</div>
+			<AntModal
+				centered
+				open={open}
+				onOk={() => setOpen(false)}
+				onCancel={() => setOpen(false)}
+				width={"100%"}
+				height={"100%"}>
+				{getModalData()}
+			</AntModal>
+			<AntModalMobile
+				centered
+				open={open}
+				onOk={() => setOpen(false)}
+				onCancel={() => setOpen(false)}>
+				{getModalData()}
+			</AntModalMobile>
 		</Container>
 	);
 }
