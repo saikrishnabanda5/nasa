@@ -1,0 +1,6 @@
+antd - used here for modal
+date-fns - used to convert date format
+react-infinite-scroll-component - for infinite scrolling on apge
+react-truncate-markup - used for latest description in spotlight
+styled-components - for styling the page
+react-player - for video
