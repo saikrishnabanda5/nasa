@@ -40,19 +40,6 @@
 	--card-border-rgb: 131, 134, 135;
 }
 
-/* @font-face {
-	font-family: "providence-bold";
-	src: url("https://ufonts.com/fonts/providence-bold.eot");
-	src: url("https://ufonts.com/fonts/providence-bold.eot?#iefix")
-			format("embedded-opentype"),
-		url("https://ufonts.com/fonts/providence-bold.woff") format("woff"),
-		url("https://ufonts.com/fonts/providence-bold.ttf") format("truetype"),
-		url("https://ufonts.com/fonts/providence-bold.svg#providence-bold")
-			format("svg");
-	font-weight: normal;
-	font-style: normal;
-} */
-
 @media (prefers-color-scheme: dark) {
 	:root {
 		--foreground-rgb: 255, 255, 255;
@@ -90,7 +77,7 @@
 	box-sizing: border-box;
 	padding: 0;
 	margin: 0;
-	font-family: helvetica;
+	font-family: system-ui;
 }
 
 html,
@@ -113,4 +100,8 @@ a {
 	html {
 		color-scheme: dark;
 	}
+}
+
+.ant-modal-mask {
+	background: transparent !important;
 }
