@@ -12,11 +12,16 @@ export const SpotLightContainer = styled.div`
 	}
 	@media screen and (max-width: 767px) {
 		flex-direction: column;
+		align-items: flex-start;
+		margin-left: 24px;
 	}
 `;
 
 export const Author = styled.h3`
 	padding-top: 16px;
+	@media screen and (max-width: 767px) {
+		padding-bottom: 16px;
+	}
 `;
 
 export const Details = styled.div`
@@ -28,9 +33,14 @@ export const Details = styled.div`
 
 export const Description = styled.p`
 	padding-top: 16px;
+	font-family: sans-serif;
 `;
 
-export const Title = styled.h1``;
+export const Title = styled.h1`
+	@media screen and (max-width: 767px) {
+		font-size: 25px;
+	}
+`;
 
 export const AntModal = styled(Modal)`
 	.ant-modal-content {

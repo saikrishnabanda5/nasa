@@ -31,6 +31,7 @@ export const Right = styled.div`
 	color: #ffffff;
 	@media screen and (max-width: 767px) {
 		font-size: 20px;
+		text-align: right;
 	}
 `;
 export const Name = styled.h1`
