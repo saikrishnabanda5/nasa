@@ -21,7 +21,7 @@ import {
 import SpotLight from "../SpotLight";
 import Header from "../Header";
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
-
+import { getNasaApiData } from "../../apiService/apiCall";
 function NasaDetails({ data }) {
 	const [lastWeekResponse, setLastWeekResponse] = useState([]);
 	const [startDate, setStartDate] = useState(true);
@@ -51,42 +51,35 @@ function NasaDetails({ data }) {
 	const fetchNasaData = async () => {
 		const dataLength = lastWeekResponse.length;
 		const dataId = Math.floor(dataLength / 7 - 2);
-		await axios
-			.get(
-				`${
-					process.env.NEXT_PUBLIC_SERVER_URL
-				}/nasa?api=weekData&start_date=${format(
-					subDays(new Date(), dataLength + getStartDate()),
-					"yyyy-MM-dd"
-				)}&end_date=${format(
-					subDays(new Date(), getLength(dataLength)),
-					"yyyy-MM-dd"
-				)}&thumbs=true`
-			)
-			.then(function (response) {
-				setLoading(false);
-				if (Math.floor(dataLength / 7) > 0) {
-					setShimmer(false);
-					setWeekCount([
-						...weekCount,
-						{
-							id: dataId,
-							start: dataLength - dataId,
-							end: dataLength - dataId + 7,
-						},
-					]);
-				}
+		try {
+			const response = await getNasaApiData(
+				format(subDays(new Date(), dataLength + getStartDate()), "yyyy-MM-dd"),
+				format(subDays(new Date(), getLength(dataLength)), "yyyy-MM-dd")
+			);
 
-				response.data.sort(function (start, end) {
-					var start_date = new Date(start.date);
-					var end_date = new Date(end.date);
-					return end_date - start_date;
-				});
-				setLastWeekResponse([...lastWeekResponse, ...response.data]);
-			})
-			.catch(function (error) {
-				console.log(error);
+			setLoading(false);
+			if (Math.floor(dataLength / 7) > 0) {
+				setShimmer(false);
+				setWeekCount([
+					...weekCount,
+					{
+						id: dataId,
+						start: dataLength - dataId,
+						end: dataLength - dataId + 7,
+					},
+				]);
+			}
+
+			response.data.sort(function (start, end) {
+				var start_date = new Date(start.date);
+				var end_date = new Date(end.date);
+				return end_date - start_date;
 			});
+
+			setLastWeekResponse([...lastWeekResponse, ...response.data]);
+		} catch (error) {
+			console.log("ERROR");
+		}
 	};
 
 	useEffect(() => {
